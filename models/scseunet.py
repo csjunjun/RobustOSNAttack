@@ -132,18 +132,12 @@ class EncoderDecoder(AbstractModel):
         x_ori = x 
         _, _, h0, w0 = x.shape
         enc_results = []
-        # x = self.diff_jpeg([(x+1)/2,95])
-        # x = (x - 0.5) * 2
+
         
       
         for stage in self.encoder_stages:
             x = stage(x)
             enc_results.append(torch.cat(x, dim=1) if isinstance(x, tuple) else x.clone())
-
-        # enc_results2 = []
-        # for stage in self.encoder_stages2:
-        #     x2 = stage(x2)
-        #     enc_results2.append(torch.cat(x2, dim=1) if isinstance(x2, tuple) else x2.clone())
 
         last_dec_out = enc_results[-1]
         x = last_dec_out
