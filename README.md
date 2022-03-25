@@ -14,7 +14,7 @@ An official implementation code for paper "Generating Robust Adversarial Example
 ## Background
 
 <p align='center'>  
-  <img src='https://github.com/HighwayWu/ImageInpainting/blob/master/imgs/demo.png' width='870'/>
+  <img src='https://github.com/csjunjun/RobustOSNAttack/blob/main/imgs/background.jpg' width='500'/>
 </p>
 <p align='center'>  
   <em>The scenario of transmitting AEs over OSNs and the impact on their attack capabilities.</em>
