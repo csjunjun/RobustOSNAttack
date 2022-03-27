@@ -30,8 +30,14 @@ In this paper, we have designed a new framework for generating robust AEs that s
 
 ## Demo
 
-To be done.
-
+1. train your SIO model
+```bash
+python train.py 
+```
+2. generate robust AEs with the pre-trained SIO model
+```bash
+python attack.py 
+```
 **Note: The pretrained weights and dataset can be downloaded from:
 [Google Drive](https://drive.google.com/drive/folders/1M-yrL-DDvNd-KV9vxmxxAwAYTVMa6pde?usp=sharing) or 
 [Baidu Yun (Code: djzz)](https://pan.baidu.com/s/10GHrwNv57L2d2bD_5X3W0g)**
