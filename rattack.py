@@ -93,7 +93,7 @@ def AttackLinf(imgs,labels,osnmodel,recogmodel,attype,eps,alpha=0.5,random=False
 
 if __name__ =="__main__":
     img_size = 256
-    imgnet_testloader = getImagenetTrainWithPath('/home/junliu/data/ImageNet_val',1,resize=True,isshuffle=False,resize_v=img_size) #可以測試兩個ImagenetVAl和 ImageNET train中的非訓練數據的看效果
+    imgnet_testloader = getImagenetTrainWithPath('/home/junliu/data/ImageNet_val',1,resize=True,isshuffle=False,resize_v=img_size)
     fail = 0 
     suc = 0
     recog_suc = 0
