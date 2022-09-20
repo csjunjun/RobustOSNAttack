@@ -380,102 +380,6 @@ class ForgeryForensics():
         print('Val: G:%.8f P: %4.2f -> %4.2f   S: %5.4f -> %5.4f   M: %5.2f -> %5.2f' % (np.mean(gen_losses), np.mean(psnr_o), np.mean(psnr), np.mean(ssim_o), np.mean(ssim), np.mean(mse_o), np.mean(mse)))
         return np.mean(gen_losses), np.mean(psnr), np.mean(ssim), np.mean(mse), np.mean(psnr_o), np.mean(ssim_o), np.mean(mse_o)
 
-        
-    def valOne(self):
-        #self.giid_model.load('best_1/SCSEUnet_weights_20210613png92_ep40.pth')
-        self.giid_model.load('best_0/SCSEUnet_weights_2021915pngqf92_100ep_fb_noresdualnojpeg_2.pth')
-        modelname = 'Scseunetnoresnoj'
-        #self.giid_model.load('best_0/SCSEUnet_weights_20210627png92_abla_noisjpeg.pth') #abaltion nojpeg 100ep
-        #self.giid_model.load('mid_410/SCSEUnet_weights_20210701pngqfmean_100ep.pth')
-        #self.giid_model.load('best_0/SCSEUnet_weights_20210626png92_ep100.pth')
-        self.giid_model.eval()
-        psnr, ssim, mse, gen_losses = [], [], [], []
-        psnr_o, ssim_o, mse_o = [], [], []
-        l1_losses=[]
-        for cnt, items in enumerate(self.val_loader):
-        #for cnt, items in enumerate(self.train_loader):
-            Ii, Ir, Mg,oriqf,isjpeg = (item.cuda() for item in items[:-1])
-            Ii.sub_(mean).div_(std)
-            filename = items[-1]
-            imgnum = int(filename[0].split("_")[0])
-            #if not (imgnum == 3238 or imgnum == 3252):
-            #if not (imgnum == 3241 or imgnum == 3251):
-            if not (imgnum == 3240 or imgnum == 3250 or imgnum == 3252):
-                continue
-            Mo, gen_loss,l1_loss = self.giid_model.process(Ir, Mg, oriqf,isjpeg,eva=True)
-            B, C, H, W = Mo.shape
-            gen_losses.append(gen_loss.item())
-            l1_losses.append(l1_loss.item())
-            Ii, Mg, Mo = self.convert1(Ii), self.convert1(Mg), self.convert1(Mo) #original , ground truth,predict
-            r1, r2, r3 = Mg - Ii, Mo - Ii, Ii - Ii # rel res, generate res,0
-            # r1[r1 > 8] = 0
-            # r1[r1 < -8] = 0
-            # r2[r2 > 4] = 0
-            # r2[r2 < 4] = 0
-            # r1 = cv2.normalize(r1, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255
-            # r2 = cv2.normalize(r2, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255
-            p, s, m = metric_osn(r1, r2)
-            p_o, s_o, m_o = metric_osn(r1, r3)
-
-            p_img, s_img, m_img = metric_osn(Mg, Mo)
-            # p, s, m = metric_osn(Mg - Ii, Mo - Ii)
-            # p_o, s_o, m_o = metric_osn(Mg - Ii, Ii - Ii)
-            psnr.append(p)
-            ssim.append(s)
-            mse.append(m)
-            psnr_o.append(p_o)
-            ssim_o.append(s_o)
-            mse_o.append(m_o)
-            
-            #dp = base_path+'results/20210705_scseep40_val_' + gpu_ids[0]
-            #dp = base_path+'results/20210707_scseep100nojpg_val_' + gpu_ids[0]
-
-            dp = base_path+'results/20210918_forpaper' + gpu_ids[0]
-            if not os.path.exists(dp):
-                os.mkdir(dp)
-                print("new folder {}".format(dp))
-            # with open(dp+'/info.txt','a+') as f:
-            #     f.write('{}:gen_loss:{},l1_loss:{},p:{},s:{},m:{},p_o:{},s_o:{},m_o:{}\n'.format(filename,gen_loss.item(),l1_loss.item(),p,s,m,p_o,s_o,m_o))
-            # print: original file, download file, generate file, download res, generate res
-            if cnt < 100:
-                for i in range(len(Mo)):
-                    rtn = np.ones([H, W, 3], dtype=np.uint8) * 255
-                    rtn[:, :W, :] = Ii[i][..., ::-1]
-                    cv2.imwrite(dp + '/{}original.png'.format(imgnum) , rtn)
-
-                    rtn2 = np.ones([H, W, 3], dtype=np.uint8) * 255
-                    rtn2[:, :W, :] = Mg[i][..., ::-1]
-                    cv2.imwrite(dp + '/{}realdown.png'.format(imgnum) , rtn2)
-
-                    rtn3 = np.ones([H, W, 3], dtype=np.uint8) * 255
-                    rtn3[:, :W, :] = Mo[i][..., ::-1]
-                    cv2.imwrite(dp + '/{}mimic{}.png'.format(imgnum,modelname) , rtn3)
-
-                    resdual_1 = Mg[i][..., ::-1] - Ii[i][..., ::-1] #download real res
-                    resdual_2 = Mo[i][..., ::-1] - Ii[i][..., ::-1] #generate
-                    # resdual_1[resdual_1 > 8] = 0
-                    # resdual_1[resdual_1 < -8] = 0   to seee if not 
-                    # resdual_2[resdual_2 > 4] = 0
-                    # resdual_2[resdual_2 < -4] = 0
-                    resdual_1 = cv2.normalize(resdual_1, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255
-                    resdual_2 = cv2.normalize(resdual_2, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255
-                    resdual = np.concatenate([resdual_1, resdual_2], axis=2)
-                    # resdual[resdual > 4] = 0
-                    # resdual[resdual < -4] = 0
-                    # resdual = cv2.normalize(resdual, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F) * 255
-                    resdual_1 = cv2.cvtColor(resdual[:, :, :3], cv2.COLOR_RGB2GRAY)
-                    resdual_2 = cv2.cvtColor(resdual[:, :, 3:], cv2.COLOR_RGB2GRAY)
-                    
-                    rtn4 = np.ones([H, W, 3], dtype=np.uint8) * 255
-                    rtn4[:, :W, :] = np.concatenate([resdual_1[..., None], resdual_1[..., None], resdual_1[..., None]], axis=2)
-                    cv2.imwrite(dp + '/{}realdownres.png'.format(imgnum) , rtn4)
-
-                    rtn5 = np.ones([H, W, 3], dtype=np.uint8) * 255
-                    rtn5[:, :W, :] = np.concatenate([resdual_2[..., None], resdual_2[..., None], resdual_2[..., None]], axis=2)
-                    cv2.imwrite(dp + '/{}mimicres{}.png'.format(imgnum,modelname) , rtn5)
-
-        print('Val: G:%.8f P: %4.2f -> %4.2f   S: %5.4f -> %5.4f   M: %5.2f -> %5.2f L1:%.8f' % (np.mean(gen_losses), np.mean(psnr_o), np.mean(psnr), np.mean(ssim_o), np.mean(ssim), np.mean(mse_o), np.mean(mse),np.mean(l1_losses)))
-        return np.mean(gen_losses), np.mean(psnr), np.mean(ssim), np.mean(mse), np.mean(psnr_o), np.mean(ssim_o), np.mean(mse_o),np.mean(l1_losses)
 
     def convert1(self, img):
         img = img * 127.5 + 127.5
@@ -532,26 +436,10 @@ if __name__ == '__main__':
     #args = parser.parse_args()
     
     #if args.type == 'train':
-    model = ForgeryForensics()
-    model.train()
-    #model.val()
-    #model.valOne()
-    """
-    elif args.type == 'test':
-        model = GIID_Model().cuda()
-        # model.load('best_03081734_log2/') # Img No Adv
-        # model.load('best_03081719_log2/') # LBP + Img No Adv
-        # model.load('best_03091009_log4/') # LBP + Img Adv
-        # model.load('best_03060126_log2/') # Adv
-        # model.load('best_03061100_log2/') # Adv Best
-        # model.load('best_03111358_log4/') # [Img+LBP]+Adv
-        model.load('best_03111942_log4/') # [Img+LBP]+noAdv
-        # model.load('latest_02222243_log0/')
-        # model.load('best_02260900_log4/')
-        # model.load('best_03111358_log4/')
-        # model.load('best_2/')
-        forensics_test(model=model)
+        model = ForgeryForensics()
+        model.train()
+   
     elif args.type == 'val':
         model = ForgeryForensics()
         model.val()
-    """
+
