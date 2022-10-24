@@ -149,7 +149,7 @@ class GIID_Model(nn.Module):
     def __init__(self):
         super(GIID_Model, self).__init__()
         self.lr = 1e-4
-        self.networks = SCSEUnet(seg_classes=3,backbone_arch='senet154',isResidual=True,isJPEG=True)  #jun :best performace  6.67 in log_4.txt
+        self.networks = SCSEUnet(seg_classes=3,backbone_arch='senet154',isResidual=True,isJPEG=True)  
         #print("SCSEUnet summary")
         #summary(self.networks.cuda(),input_size=(3,256,256))
         
@@ -425,17 +425,12 @@ def metric_osn(real, fake):
 
 
 if __name__ == '__main__':
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument('type', type=str,default='train', required = False,help='train or test the model', choices=['train', 'test', 'val'])
-    #parser.add_argument('is_lbp', type=bool, help='if true, only train the lbp network', choices=[True, False])
-    #parser.add_argument('is_adv', type=bool, help='if true, train the model with adv', choices=[True, False])
-    #parser.add_argument('--is_lbp', type=str, default='no')
-    #parser.add_argument('--is_adv', type=str, default='no')
-    # parser.add_argument('--type', type=str, default='train')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--type', type=str, default='train')
     
-    #args = parser.parse_args()
+    args = parser.parse_args()
     
-    #if args.type == 'train':
+    if args.type == 'train':
         model = ForgeryForensics()
         model.train()
    
