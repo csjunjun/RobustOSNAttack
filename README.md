@@ -36,7 +36,7 @@ python train.py
 ```
 2. generate robust AEs with the pre-trained SIO model
 ```bash
-python rattack.py 
+python rattacks/rfgsm.py 
 ```
 **Note: The pretrained weights and dataset can be downloaded from:
 [Google Drive](https://drive.google.com/drive/folders/1M-yrL-DDvNd-KV9vxmxxAwAYTVMa6pde?usp=sharing) or 
