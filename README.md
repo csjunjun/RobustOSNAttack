@@ -34,7 +34,7 @@ Online Social Networks (OSNs) have blossomed into prevailing transmission channe
 ```bash
 python train.py 
 ```
-2. generate robust AEs with the pre-trained SIO model
+2. generate robust AEs with the pre-trained SIO model by R-FGSM
 ```bash
 python rattacks.py --attype 0
 ```
