@@ -10,8 +10,16 @@ class OSN_Net(nn.Module):
         super(OSN_Net,self).__init__()
         self.name ='OSN_Net'
         self.patch_size = patch_size
-  
-        self.UNet = scseunet.SCSEUnet(seg_classes=3,backbone_arch='senet154')
+        # for Facebook
+        resRatio = 0.02
+        qf =92
+        # for WeChat 
+        # resRatio = 0.05
+        # qf = 58 
+        # for qq
+        # reRatio = 0.3
+        # qf = 85
+        self.UNet = scseunet.SCSEUnet(seg_classes=3,backbone_arch='senet154',resRatio=resRatio,qf=qf)
         self.UNet =torch.nn.DataParallel(self.UNet).cuda() 
         modelpath='.pth' 
         self.modelname = 'scseunet'
