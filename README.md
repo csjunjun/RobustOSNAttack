@@ -45,7 +45,7 @@ python rattacks/rfgsm.py
 ## Citation
 
 ## Acknowledgments
-Our code is based on the [DiffJPEG](https://github.com/mlomnitz/DiffJPEG).
+Our code benefits from the [DiffJPEG](https://github.com/mlomnitz/DiffJPEG).
 
 
 
