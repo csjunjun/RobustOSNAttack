@@ -66,7 +66,7 @@ class AbstractModel(nn.Module):
 
 
 class EncoderDecoder(AbstractModel):
-    def __init__(self, num_classes, num_channels=3, encoder_name='resnet34', isResidual=False, isJPEG=False):
+    def __init__(self, num_classes, num_channels=3, encoder_name='resnet34', isResidual=False, isJPEG=False,resRatio=0.02,qf=92):
         if not hasattr(self, 'first_layer_stride_two'):
             self.first_layer_stride_two = False
         if not hasattr(self, 'decoder_block'):
@@ -117,7 +117,8 @@ class EncoderDecoder(AbstractModel):
         #     self.initialize_encoder(encoder2, encoder_params[encoder_name]['url'], num_channels != 3)
         self.isJPEG = isJPEG 
         self.isResidual = isResidual
-        self.resRatio=0.02
+        self.resRatio=resRatio
+        self.qf = qf
         #self.dropout = nn.Dropout(0.3)
         print("res propotion:{}".format(self.resRatio))
         if self.isJPEG:
@@ -162,7 +163,7 @@ class EncoderDecoder(AbstractModel):
             out = f
         #out = self.dropout(out)
         if self.isJPEG:
-            out = self.diff_jpeg([(out+1)/2,92])
+            out = self.diff_jpeg([(out+1)/2,self.qq])
             out = (out - 0.5) * 2
             
         return out
