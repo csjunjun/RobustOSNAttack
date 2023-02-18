@@ -1,7 +1,7 @@
 import sys 
 import os 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-import torch
+import torch,argparse
 import numpy as np
 
 from torchvision import transforms
@@ -92,6 +92,13 @@ def AttackLinf(imgs,labels,osnmodel,recogmodel,attype,eps,alpha=0.5,random=False
 
 
 if __name__ =="__main__":
+    parser = argparse.ArgumentParser(description='Robust attack')
+    parser.add_argument('--attype', default= '0')
+    parser.add_argument('--eps', type=int, default= 1,  help ='linfty constratin for R-FGSM/R-PGD/R-MIFGSM')
+    parser.add_argument('--alpha',type=double, default= 0.1,  help='lambda in the paper for adjusting the loss fuction items')
+    parser.add_argument('--cwc',type=int, default= 2,  help='coeffecient c for R-C&W')
+    parser.add_argument('--step',type=int, default= 100,  help='iteration step for R-C&W/R-PGD/R-MIFGSM')
+    args = parser.parse_args()
     img_size = 256
     imgnet_testloader = getImagenetTrainWithPath('/home/junliu/data/ImageNet_val',1,resize=True,isshuffle=False,resize_v=img_size)
     fail = 0 
@@ -130,11 +137,11 @@ if __name__ =="__main__":
             img_num += 1
             continue
         model_suc+=1
-        attype = 0
-        eps = 3
-        st=100
-        alpha =0.3
-        cwc =2
+        attype = args.attype
+        eps = args.eps
+        st=args.step
+        alpha =args.alpha
+        cwc =args.cwc
         lr = 0.01
         cwk=0
         x_adv,adv_label,attype,succ = AttackLinf(x,y,osnmodel,recgmodel,attype,eps,alpha=alpha,random=False,filter=False,steps=st,cwc=cwc,lr=lr,cwk=cwk,atttype=1)
