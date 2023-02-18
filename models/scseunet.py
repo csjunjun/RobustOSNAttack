@@ -233,9 +233,9 @@ class UnetDecoderBlock(nn.Module):
 
 
 class SEUnet(EncoderDecoder):
-    def __init__(self, seg_classes=1, num_channels=3, backbone_arch='senet154',isResidual=True,isJPEG=True):
+    def __init__(self, seg_classes=1, num_channels=3, backbone_arch='senet154',isResidual=True,isJPEG=True,resRatio=0.02,qf=92):
         self.first_layer_stride_two = True
-        super().__init__(seg_classes, num_channels=num_channels, encoder_name=backbone_arch,isResidual=isResidual,isJPEG=isJPEG)
+        super().__init__(seg_classes, num_channels=num_channels, encoder_name=backbone_arch,isResidual=isResidual,isJPEG=isJPEG,resRatio=resRatio,qf=qf)
 
     def get_encoder(self, encoder, layer):
         if layer == 0:
@@ -275,10 +275,10 @@ class ConvSCSEBottleneckNoBn(nn.Module):
 
 
 class SCSEUnet(SEUnet):
-    def __init__(self, seg_classes=1, num_channels=3, backbone_arch='seresnext50',isResidual=True,isJPEG=True):
+    def __init__(self, seg_classes=1, num_channels=3, backbone_arch='seresnext50',isResidual=True,isJPEG=True,resRatio=0.02,qf=92):
         self.name = 'SCSEUnet'
         self.bottleneck_type = ConvSCSEBottleneckNoBn
-        super().__init__(seg_classes, num_channels=num_channels, backbone_arch=backbone_arch,isResidual=isResidual,isJPEG=isJPEG)
+        super().__init__(seg_classes, num_channels=num_channels, backbone_arch=backbone_arch,isResidual=isResidual,isJPEG=isJPEG,resRatio=resRatio,qf=qf)
 
 
 
