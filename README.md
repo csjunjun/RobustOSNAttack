@@ -1,6 +1,6 @@
 # RobustOSNAttack
 
-An official implementation code for paper "Generating Robust Adversarial Examples against Online Social Networks (OSNs)"
+An official implementation code for paper "Generating Robust Adversarial Examples against Online Social Networks (OSNs)", accepted by ACM Transactions on Multimedia Computing, Communications, and Applications (TOMM).
 
 ## Table of Contents
 
